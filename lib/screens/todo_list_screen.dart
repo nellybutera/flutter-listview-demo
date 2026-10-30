@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Demo 5: a list whose data changes.
-///
-/// ListView is a StatelessWidget, so it cannot change its own items.
-/// The *data* (the _tasks list) lives in this StatefulWidget. When we call
-/// setState(), build() runs again and a new ListView is created with the
-/// updated data.
+// Demo 5: a to-do list you can add to, tick off and swipe away.
+// the list of tasks lives in this State, and setState() rebuilds the ListView
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
 
@@ -14,20 +10,18 @@ class TodoListScreen extends StatefulWidget {
 }
 
 class Task {
-  final int id;
   final String title;
-  bool done;
+  bool done = false;
 
-  Task(this.id, this.title, {this.done = false});
+  Task(this.title);
 }
 
 class _TodoListScreenState extends State<TodoListScreen> {
   final _textController = TextEditingController();
-  int _nextId = 4;
-  final List<Task> _tasks = [
-    Task(1, 'Prepare ListView slides'),
-    Task(2, 'Practice the demo'),
-    Task(3, 'Answer questions'),
+  final _tasks = [
+    Task('Prepare ListView slides'),
+    Task('Practice the demo'),
+    Task('Answer questions'),
   ];
 
   @override
@@ -39,18 +33,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
   void _addTask() {
     final text = _textController.text.trim();
     if (text.isEmpty) return;
-    setState(() {
-      _tasks.add(Task(_nextId++, text));
-    });
+    setState(() => _tasks.add(Task(text)));
     _textController.clear();
-  }
-
-  void _toggleTask(Task task) {
-    setState(() => task.done = !task.done);
-  }
-
-  void _removeTask(Task task) {
-    setState(() => _tasks.remove(task));
   }
 
   @override
@@ -73,50 +57,29 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     onSubmitted: (_) => _addTask(),
                   ),
                 ),
-                const SizedBox(width: 8),
-                IconButton.filled(
-                  onPressed: _addTask,
-                  icon: const Icon(Icons.add),
-                ),
+                IconButton(onPressed: _addTask, icon: const Icon(Icons.add)),
               ],
             ),
           ),
-          // A ListView inside a Column must be wrapped in Expanded,
-          // otherwise it gets unbounded height and throws an error.
+          // ListView inside a Column needs Expanded or you get a height error
           Expanded(
-            child: _tasks.isEmpty
-                ? const Center(child: Text('No tasks. Add one above!'))
-                : ListView.builder(
-                    itemCount: _tasks.length,
-                    itemBuilder: (context, index) {
-                      final task = _tasks[index];
-                      // A unique Key tells Flutter which item is which,
-                      // so the right one is removed when swiped.
-                      return Dismissible(
-                        key: ValueKey(task.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
-                        ),
-                        onDismissed: (_) => _removeTask(task),
-                        child: CheckboxListTile(
-                          value: task.done,
-                          onChanged: (_) => _toggleTask(task),
-                          title: Text(
-                            task.title,
-                            style: TextStyle(
-                              decoration: task.done
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+            child: ListView.builder(
+              itemCount: _tasks.length,
+              itemBuilder: (context, index) {
+                final task = _tasks[index];
+                return Dismissible(
+                  // the key tells flutter which task got swiped
+                  key: ObjectKey(task),
+                  background: Container(color: Colors.red),
+                  onDismissed: (_) => setState(() => _tasks.remove(task)),
+                  child: CheckboxListTile(
+                    title: Text(task.title),
+                    value: task.done,
+                    onChanged: (_) => setState(() => task.done = !task.done),
                   ),
+                );
+              },
+            ),
           ),
         ],
       ),
