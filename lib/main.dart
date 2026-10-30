@@ -26,7 +26,7 @@ class ListViewDemoApp extends StatelessWidget {
   }
 }
 
-/// A single demo shown on the home screen.
+// each menu item: title, subtitle, icon and the screen it opens
 class Demo {
   final String title;
   final String subtitle;
@@ -37,16 +37,36 @@ class Demo {
 }
 
 const demos = [
-  Demo('1. Basic ListView', 'ListView(children: [...])', Icons.list,
-      BasicListScreen()),
-  Demo('2. ListView.builder', '1,000 items built lazily', Icons.bolt,
-      BuilderListScreen()),
-  Demo('3. ListView.separated', 'Items with dividers between them',
-      Icons.horizontal_rule, SeparatedListScreen()),
-  Demo('4. Horizontal ListView', 'scrollDirection: Axis.horizontal',
-      Icons.swap_horiz, HorizontalListScreen()),
-  Demo('5. Dynamic list (Stateful)', 'Add, tap and swipe to delete',
-      Icons.edit_note, TodoListScreen()),
+  Demo(
+    '1. Basic ListView',
+    'ListView(children: [...])',
+    Icons.list,
+    BasicListScreen(),
+  ),
+  Demo(
+    '2. ListView.builder',
+    '1,000 items built lazily',
+    Icons.bolt,
+    BuilderListScreen(),
+  ),
+  Demo(
+    '3. ListView.separated',
+    'Items with dividers between them',
+    Icons.horizontal_rule,
+    SeparatedListScreen(),
+  ),
+  Demo(
+    '4. Horizontal ListView',
+    'scrollDirection: Axis.horizontal',
+    Icons.swap_horiz,
+    HorizontalListScreen(),
+  ),
+  Demo(
+    '5. Dynamic list (Stateful)',
+    'Add, tap and swipe to delete',
+    Icons.edit_note,
+    TodoListScreen(),
+  ),
 ];
 
 class HomeScreen extends StatelessWidget {
@@ -56,7 +76,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('ListView Widget Demo')),
-      // The menu itself is a ListView too!
+      // the home menu is a ListView too
       body: ListView.builder(
         itemCount: demos.length,
         itemBuilder: (context, index) {
@@ -66,6 +86,7 @@ class HomeScreen extends StatelessWidget {
             title: Text(demo.title),
             subtitle: Text(demo.subtitle),
             trailing: const Icon(Icons.chevron_right),
+            // open the demo screen when tapped
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => demo.screen),
