@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
-/// Demo 4: a horizontal ListView nested inside a vertical one.
-///
-/// A horizontal ListView needs a bounded height, so we wrap it in a
-/// SizedBox. Without it Flutter doesn't know how tall to make it.
+// Demo 4: rows that scroll sideways, like Netflix or the Play Store
 class HorizontalListScreen extends StatelessWidget {
   const HorizontalListScreen({super.key});
 
   static const colors = [
-    Colors.red, Colors.orange, Colors.amber, Colors.green,
-    Colors.teal, Colors.blue, Colors.indigo, Colors.purple,
+    Colors.red,
+    Colors.orange,
+    Colors.amber,
+    Colors.green,
+    Colors.teal,
+    Colors.blue,
+    Colors.indigo,
+    Colors.purple,
   ];
 
   @override
@@ -18,31 +21,35 @@ class HorizontalListScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Horizontal ListView')),
       body: ListView(
         children: [
-          _sectionTitle('Trending'),
-          _horizontalRow(),
-          _sectionTitle('Recommended for you'),
-          _horizontalRow(),
-          _sectionTitle('Recently viewed'),
-          _horizontalRow(),
+          for (final title in [
+            'Trending',
+            'Recommended for you',
+            'Recently viewed',
+          ]) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            _horizontalRow(),
+          ],
         ],
       ),
     );
   }
 
-  Widget _sectionTitle(String text) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
   Widget _horizontalRow() {
+    // a sideways list inside an up-down list needs a fixed height,
+    // otherwise flutter doesn't know how tall to make it
     return SizedBox(
       height: 120,
       child: ListView.builder(
+        // scrollDirection: default is vertical, this makes it go left to right
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         itemCount: colors.length,
